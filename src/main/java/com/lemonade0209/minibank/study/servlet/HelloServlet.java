@@ -1,4 +1,4 @@
-package com.lemonade0209.minibank.servlet;
+package com.lemonade0209.minibank.study.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

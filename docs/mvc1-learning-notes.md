@@ -194,3 +194,71 @@ Servlet
 ### 다음 학습 게이트
 
 MVC1 서블릿 섹션의 프로젝트 생성 강의를 마친 뒤에만 Spring Boot 프로젝트를 생성한다. 그전에는 `HomeController`, 회원가입 코드와 Thymeleaf 기반 MiniBank 화면을 만들지 않는다.
+
+---
+
+## 7/22 - 서블릿 요청·응답
+
+### Form 파라미터
+
+HTML Form의 `name` 값과 Servlet에서 읽는 파라미터 이름은 같아야 한다.
+
+```text
+<input name="loginId">
+-> request.getParameter("loginId")
+```
+
+실습에서는 `username`, `age`를 POST Form으로 전송했고, `RequestParamServlet`에서 `request.getParameter()`로 값을 확인했다. MiniBank 회원가입 Form에는 나중에 `loginId`, `password`, `name`을 사용한다.
+
+### 요청 본문
+
+`POST /request-body-string` 요청의 본문은 `request.getInputStream()`으로 읽을 수 있다. `StreamUtils.copyToString(..., UTF_8)`으로 문자열로 변환해 콘솔에 출력했다.
+
+### Redirect
+
+`response.sendRedirect("/request-param-form.html")`은 브라우저에 `302`와 `Location` 헤더를 보낸다. 브라우저는 Location 주소로 새 GET 요청을 보낸다.
+
+### 7/21~7/22 Servlet 핵심 함수
+
+| 구분 | 함수·도구 | 언제 사용하는가 |
+|---|---|---|
+| Servlet 등록 | `@WebServlet(urlPatterns = "/...")` | URL과 Servlet을 연결할 때 사용한다. |
+| 요청 처리 | `service(request, response)` | 모든 HTTP Method를 직접 처리할 때 사용한다. `HttpServlet`의 기본 `service()`는 Method에 따라 `doGet()`·`doPost()`로 분기한다. |
+| GET·POST 분리 | `doGet()`, `doPost()` | GET과 POST의 처리 흐름이 다를 때 각각 구현한다. |
+| 요청 Method 확인 | `request.getMethod()` | 현재 요청이 GET·POST 등 무엇인지 확인한다. |
+| URL·쿼리 확인 | `request.getRequestURI()`, `request.getQueryString()` | 요청 경로와 `?key=value` 부분을 확인한다. |
+| Form·쿼리 단일값 | `request.getParameter("name")` | URL 쿼리나 `application/x-www-form-urlencoded` Form의 값을 읽는다. HTML의 `name`과 문자열을 같게 쓴다. |
+| 같은 이름의 여러 값 | `request.getParameterValues("name")` | 체크박스처럼 같은 이름으로 여러 값을 보냈을 때 사용한다. |
+| 전체 Form·쿼리 값 | `request.getParameterNames()` | 들어온 파라미터 이름 전체를 확인할 때 사용한다. |
+| POST 한글 처리 | `request.setCharacterEncoding("UTF-8")` | 파라미터를 읽기 전에 요청 본문의 문자 인코딩을 지정한다. |
+| 헤더 확인 | `request.getHeader("...")`, `request.getHeaderNames()` | `User-Agent`, `Content-Type` 같은 요청 헤더를 확인한다. |
+| 본문 읽기 | `request.getInputStream()` | JSON이나 일반 텍스트처럼 요청 본문을 직접 읽을 때 사용한다. `getParameter()`로 JSON 본문을 읽을 수는 없다. |
+| 본문 문자열 변환 | `StreamUtils.copyToString(inputStream, UTF_8)` | `InputStream`으로 읽은 바이트를 UTF-8 문자열로 바꾼다. |
+| 응답 종류 지정 | `response.setContentType("text/html")` | 응답 본문이 HTML, JSON, 일반 텍스트 중 무엇인지 브라우저에 알린다. JSON은 `application/json`을 쓴다. |
+| 응답 인코딩 | `response.setCharacterEncoding("UTF-8")` | 한글 등 응답 문자열의 문자 인코딩을 지정한다. |
+| 응답 본문 작성 | `response.getWriter().write("...")` | HTML·일반 텍스트·JSON 문자열을 응답 본문에 쓴다. |
+| redirect | `response.sendRedirect("/path")` | 브라우저에 302와 `Location`을 보내 다른 URL로 새 요청하게 한다. |
+
+### JSON과 ObjectMapper
+
+`ObjectMapper`는 Java 객체와 JSON 문자열을 서로 변환하는 Jackson 도구다. HTML Form 값을 읽는 `getParameter()`와 용도가 다르다.
+
+| 상황 | 순서 |
+|---|---|
+| JSON 요청을 객체로 읽기 | `getInputStream()` → 문자열 변환 → `objectMapper.readValue(json, 대상클래스)` |
+| Java 객체를 JSON 응답으로 보내기 | `objectMapper.writeValueAsString(객체)` → `setContentType("application/json")` → `getWriter().write(json)` |
+
+예를 들어 Java 객체를 JSON 응답으로 바꿀 때는 `ObjectMapper`의 `writeValueAsString()`이 JSON 문자열을 만들고, `HttpServletResponse`가 그 문자열을 브라우저에 보낸다. JSON 요청을 받을 때는 반대로 `readValue()`로 JSON 문자열을 Java 객체로 바꾼다.
+
+현재 MiniBank는 SSR Form 기반 애플리케이션이므로 JSON API를 구현하지 않는다. 여기서는 Servlet 요청·응답의 데이터 형식을 구분하기 위한 학습 내용으로만 기록한다.
+
+### 완료 확인
+
+- [x] POST Form 파라미터 확인
+- [x] 요청 본문 문자열 확인
+- [x] redirect 응답 확인
+- [x] MiniBank Form 입력값과 Servlet 파라미터 이름의 관계 확인
+
+### 다음 학습 게이트
+
+서블릿·JSP·MVC 패턴의 회원 예제에서 도메인과 저장소를 확인한 뒤에만 `Member`와 `MemoryMemberRepository`를 만든다.
