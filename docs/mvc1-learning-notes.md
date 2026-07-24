@@ -262,3 +262,11 @@ HTML Form의 `name` 값과 Servlet에서 읽는 파라미터 이름은 같아야
 ### 다음 학습 게이트
 
 서블릿·JSP·MVC 패턴의 회원 예제에서 도메인과 저장소를 확인한 뒤에만 `Member`와 `MemoryMemberRepository`를 만든다.
+
+## 7/24 - MiniBank 계층별 역할
+
+| Controller | Service | Repository |
+|---|---|---|
+| HTTP 요청과 파라미터를 받고, Service를 호출한 뒤 응답 화면이나 redirect 경로를 결정한다. | 로그인 ID 중복, 계좌 소유권, 잔액과 거래 가능 여부 같은 비즈니스 규칙을 판단한다. | 회원과 계좌 같은 데이터를 저장하고 조회하며, 저장 방식의 세부 구현을 담당한다. |
+
+MiniBank의 요청 처리는 `Controller -> Service -> Repository` 방향으로 흐른다. Controller는 웹 요청과 응답에 집중하고 비즈니스 규칙을 Service에 위임하며, Service는 데이터가 필요할 때 Repository 인터페이스를 사용한다. Controller가 Repository를 직접 호출하지 않으면 웹 흐름과 저장 방식을 분리할 수 있고, 나중에 Memory Repository를 JDBC Repository로 교체해도 Controller의 흐름을 유지할 수 있다.
