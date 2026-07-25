@@ -270,3 +270,85 @@ HTML Form의 `name` 값과 Servlet에서 읽는 파라미터 이름은 같아야
 | HTTP 요청과 파라미터를 받고, Service를 호출한 뒤 응답 화면이나 redirect 경로를 결정한다. | 로그인 ID 중복, 계좌 소유권, 잔액과 거래 가능 여부 같은 비즈니스 규칙을 판단한다. | 회원과 계좌 같은 데이터를 저장하고 조회하며, 저장 방식의 세부 구현을 담당한다. |
 
 MiniBank의 요청 처리는 `Controller -> Service -> Repository` 방향으로 흐른다. Controller는 웹 요청과 응답에 집중하고 비즈니스 규칙을 Service에 위임하며, Service는 데이터가 필요할 때 Repository 인터페이스를 사용한다. Controller가 Repository를 직접 호출하지 않으면 웹 흐름과 저장 방식을 분리할 수 있고, 나중에 Memory Repository를 JDBC Repository로 교체해도 Controller의 흐름을 유지할 수 있다.
+
+## 7/25 - FrontController와 MVC 프레임워크
+
+### 기존 MVC Controller마다 반복되던 공통 작업
+
+Servlet과 JSP로 MVC를 직접 구성하면 각 Controller가 Servlet으로 등록되고, 처리 결과를 보여줄 JSP 경로를 만든 뒤 `RequestDispatcher`로 `forward`하는 코드가 반복된다. 요청 URI에 맞는 Controller를 찾는 일, View를 호출하는 일과 JSP 경로의 공통 접두사·접미사를 붙이는 일은 개별 기능보다 MVC 프레임워크에 가까운 공통 작업이다.
+
+MiniBank에서도 회원가입, 로그인 폼, 계좌 개설과 계좌 목록 Controller마다 이런 코드를 직접 작성하면 실제 요청 처리보다 기반 코드가 더 많이 반복된다.
+
+### FrontController가 공통 처리를 맡는 장점
+
+FrontController는 모든 요청의 공통 입구가 되어 요청 URI에 맞는 Controller를 찾고, Controller가 반환한 결과를 View로 연결한다. 공통 처리를 한곳에 두면 개별 Controller는 회원가입이나 계좌 조회처럼 자신이 담당하는 요청에 집중할 수 있고, 공통 동작을 변경할 때도 여러 Controller를 각각 수정할 필요가 없다.
+
+```text
+Browser
+  -> FrontController
+  -> URI에 맞는 Controller 조회와 호출
+  -> ModelView 반환
+  -> ViewResolver로 실제 View 찾기
+  -> View 렌더링
+  -> HTTP 응답
+```
+
+### Controller 인터페이스가 필요한 이유
+
+FrontController가 여러 Controller를 같은 방식으로 호출하려면 공통 호출 규칙이 필요하다. Controller 인터페이스는 입력으로 무엇을 받고 결과로 무엇을 반환할지 정하므로, FrontController는 회원 Controller인지 계좌 Controller인지 알지 못해도 동일한 메서드로 실행할 수 있다.
+
+MiniBank에서는 회원가입과 계좌 목록의 처리 내용은 다르지만, 요청을 처리하고 Model과 View 정보를 반환한다는 규칙은 같게 만들 수 있다. 새로운 기능을 추가할 때도 이 규칙을 구현한 Controller를 Controller Map에 등록하면 FrontController의 기본 흐름을 유지할 수 있다.
+
+### ModelView에 들어가는 정보
+
+ModelView에는 응답에 사용할 논리적인 View 이름과 View에 전달할 Model 데이터가 들어간다.
+
+예를 들어 MiniBank 계좌 목록 요청이라면 다음과 같이 표현할 수 있다.
+
+```text
+viewName: "accounts/list"
+model:
+  memberName -> "홍길동"
+  accounts   -> 회원의 계좌 목록
+```
+
+Controller는 `HttpServletRequest`에 직접 데이터를 저장하거나 JSP로 `forward`하지 않고 ModelView를 반환한다. 따라서 Controller는 Servlet 기술에 대한 의존을 줄이고 요청 처리 결과를 만드는 역할에 더 집중할 수 있다.
+
+### View 이름과 실제 JSP 경로를 분리하는 이유
+
+Controller가 `/WEB-INF/views/accounts/list.jsp` 같은 실제 경로를 직접 반환하면 모든 Controller에 `/WEB-INF/views/`와 `.jsp`가 반복된다. 대신 `accounts/list`라는 논리적인 View 이름만 반환하고 ViewResolver가 접두사와 접미사를 붙이면 중복을 없앨 수 있다.
+
+```text
+논리 View 이름: accounts/list
+ViewResolver:   /WEB-INF/views/ + accounts/list + .jsp
+실제 JSP 경로: /WEB-INF/views/accounts/list.jsp
+```
+
+View 파일의 기본 위치나 View 기술이 바뀌어도 Controller의 논리 이름은 유지할 수 있다는 장점도 있다. 강의의 직접 만든 프레임워크는 JSP를 사용하지만, MiniBank의 실제 화면은 이후 Spring MVC와 Thymeleaf로 구현한다.
+
+### FrontController와 일반 Controller의 역할 차이
+
+| 구분 | 역할 |
+|---|---|
+| FrontController | 요청을 한곳에서 받고, URI에 맞는 Controller를 찾고, 호출 결과를 ViewResolver와 View에 연결한다. |
+| 일반 Controller | 담당 요청의 파라미터를 읽고 필요한 Service를 호출한 뒤 Model 데이터와 논리 View 이름을 반환한다. |
+
+MiniBank의 FrontController에 해당하는 프레임워크 영역은 전체 요청 흐름을 조정하고, 회원이나 계좌 Controller는 각 기능의 웹 요청을 처리한다. 비즈니스 규칙은 일반 Controller에도 두지 않고 `MemberService`, 이후의 `AccountService` 같은 Service에 맡긴다.
+
+### MiniBank에 직접 만든 MVC 프레임워크를 적용하지 않는 이유
+
+이번 학습의 목적은 FrontController 구조를 직접 만들어 보며 Spring MVC가 해결하는 공통 문제를 이해하는 것이다. MiniBank 기능을 강의용 프레임워크 위에 다시 구현하지 않고, Spring MVC 구조 이해 섹션을 마친 뒤 Spring MVC Controller로 구현한다.
+
+### 완료 확인
+
+- [x] 기존 Controller에서 반복되는 View 이동 코드를 설명할 수 있다.
+- [x] FrontController가 공통 처리를 담당하는 이유를 설명할 수 있다.
+- [x] Controller 인터페이스가 공통 호출 규칙을 만든다는 점을 설명할 수 있다.
+- [x] ModelView의 논리 View 이름과 Model 데이터를 설명할 수 있다.
+- [x] ViewResolver가 논리 View 이름을 실제 경로로 바꾸는 과정을 설명할 수 있다.
+- [x] FrontController와 일반 Controller의 역할 차이를 MiniBank 요청에 연결했다.
+- [ ] 강의 예제 코드를 실행하고 요청 흐름을 노트 없이 설명해 본다.
+
+### 다음 학습 게이트
+
+MVC 프레임워크 만들기 후반을 마친 뒤 직접 만든 구조와 Spring MVC의 구성 요소가 어떻게 대응하는지 정리한다. `HomeController`와 `HealthController`는 Spring MVC 구조 이해 섹션을 완료한 뒤에 구현한다.
