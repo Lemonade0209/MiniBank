@@ -352,3 +352,64 @@ MiniBank의 FrontController에 해당하는 프레임워크 영역은 전체 요
 ### 다음 학습 게이트
 
 MVC 프레임워크 만들기 후반을 마친 뒤 직접 만든 구조와 Spring MVC의 구성 요소가 어떻게 대응하는지 정리한다. `HomeController`와 `HealthController`는 Spring MVC 구조 이해 섹션을 완료한 뒤에 구현한다.
+
+## 7/26 - 직접 만든 MVC 프레임워크와 Spring MVC의 대응
+
+### 구성 요소의 대응 관계
+
+| 직접 만든 MVC 프레임워크 | Spring MVC | 역할 |
+|---|---|---|
+| FrontController | DispatcherServlet | 요청을 공통 입구에서 받아 전체 처리 흐름을 조정한다. |
+| Controller Map | HandlerMapping | 요청 URL에 맞는 Controller 또는 Handler를 찾는다. |
+| Controller 호출 방식 | HandlerAdapter | 서로 다른 형태의 Handler를 정해진 방식으로 호출한다. |
+| ModelView | ModelAndView | View에 전달할 Model과 논리 View 이름을 함께 담는다. |
+| MyView | View | Model 데이터를 사용해 응답 화면을 렌더링한다. |
+| viewName 변환 | ViewResolver | 논리 View 이름으로 실제 View를 찾는다. |
+
+직접 만든 프레임워크에서는 FrontController가 Controller Map에서 요청 URI에 맞는 Controller를 찾았다. Controller의 형식이 달라지면 FrontController가 각 형식을 직접 알아야 하므로, 공통 호출 방법을 제공하는 Adapter를 두어 다양한 Controller를 같은 흐름에서 실행할 수 있게 했다.
+
+Spring MVC도 같은 원리로 `DispatcherServlet`이 `HandlerMapping`을 통해 Handler를 찾고, 그 Handler를 지원하는 `HandlerAdapter`를 사용해 호출한다. 따라서 DispatcherServlet은 Controller의 구체적인 호출 방법을 직접 알지 않아도 된다.
+
+### 직접 만든 MVC 프레임워크의 요청 흐름
+
+```text
+Browser
+  -> FrontController가 요청을 받음
+  -> Controller Map에서 요청 URI에 맞는 Controller를 찾음
+  -> Controller를 지원하는 Adapter를 찾음
+  -> Adapter가 Controller를 호출
+  -> ModelView를 반환
+  -> ViewResolver가 논리 View 이름으로 MyView를 찾음
+  -> MyView가 Model을 사용해 JSP를 렌더링
+  -> HTTP 응답
+```
+
+### Spring MVC 요청 흐름과 비교
+
+향후 구현할 MiniBank 회원가입 화면 요청을 예로 들면 다음과 같은 흐름으로 대응시킬 수 있다. 아직 `MemberController`를 구현한 것은 아니며, Spring MVC의 실제 내부 흐름은 `스프링 MVC 구조 이해` 섹션에서 확인한다.
+
+```text
+GET /members/add
+  -> DispatcherServlet이 요청을 받음
+  -> HandlerMapping이 요청을 처리할 MemberController의 Handler를 찾음
+  -> DispatcherServlet이 Handler를 실행할 HandlerAdapter를 찾음
+  -> HandlerAdapter가 Handler를 호출
+  -> 처리 결과가 Model과 논리 View 이름으로 정리됨
+  -> ViewResolver가 논리 View 이름에 해당하는 View를 찾음
+  -> Thymeleaf View가 Model 데이터로 HTML을 렌더링
+  -> 렌더링된 HTML을 HTTP 응답으로 전달
+```
+
+강의에서 직접 만든 프레임워크는 JSP를 렌더링하지만 MiniBank는 이후 Thymeleaf를 사용한다. View 기술이 달라도 Controller가 논리 View 이름과 Model을 반환하고, ViewResolver가 실제 View를 찾는 역할 분리는 유지된다.
+
+### 7/26 완료 확인
+
+- [x] FrontController와 DispatcherServlet의 역할을 대응시켰다.
+- [x] Controller Map, HandlerMapping과 HandlerAdapter의 역할 차이를 정리했다.
+- [x] 직접 만든 프레임워크와 Spring MVC의 요청 흐름을 비교했다.
+- [x] MiniBank 기능과 Spring MVC Controller를 미리 구현하지 않았다.
+- [ ] 요청 흐름을 노트 없이 직접 설명해 본다.
+
+### 다음 학습 게이트
+
+Spring MVC 구조 이해 섹션을 완료한 뒤 `HomeController`, `GET /`, `HealthController`와 `GET /health`를 구현한다. 회원가입 Controller는 Spring MVC 기본 기능의 요청 매핑과 파라미터를 학습한 뒤에 구현한다.
