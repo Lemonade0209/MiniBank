@@ -427,3 +427,47 @@ Spring MVC 구조 이해 섹션을 완료한 뒤 `HomeController`와 `GET /`를 
 ### 다음 학습 게이트
 
 7/28에는 Spring MVC 기본 기능의 `프로젝트 생성`, `로깅 간단히 알아보기`, `요청 매핑`을 학습한다. 요청 매핑 예제까지 확인한 뒤 `MemberController`의 `GET /members/add`, `POST /members/add`, `GET /login` 매핑만 작성한다. Form 바인딩과 회원 저장은 7/29의 요청 파라미터 강의 이후, `HealthController`와 `GET /health`는 7/30의 `HTTP 응답 - HTTP API, 메시지 바디에 직접 입력` 수강 이후에 구현한다.
+
+## 7/28 - 프로젝트·로깅·요청 매핑
+
+### 오늘 완료한 정확한 개별 강의
+
+- `프로젝트 생성`
+- `로깅 간단히 알아보기`
+- `요청 매핑`
+- `요청 매핑 - API 예시`
+
+### 그 강의로 새로 해금된 기술
+
+- SLF4J를 통한 애플리케이션 로그 출력
+- URL과 HTTP Method를 함께 사용한 요청 매핑
+- 파라미터·헤더·미디어 타입 조건을 사용한 세부 매핑
+- `@PathVariable`을 사용하는 URL 설계 방식
+
+### MiniBank에 실제 적용한 최소 범위
+
+- `MemberController` 작성
+- `GET /members/add`, `POST /members/add`, `GET /login` 매핑
+- 각 Handler 진입을 구분하는 `INFO` 로그
+
+### 정상 흐름 증거
+
+- `GET /members/add`, `POST /members/add`, `GET /login` 요청이 각각 의도한 Handler에 도달하는 것을 로그로 확인했다.
+- `./gradlew test`가 통과했다.
+
+### 실패 흐름 증거
+
+- 매핑하지 않은 `PUT /members/add` 요청이 `405 Method Not Allowed`가 되고 회원가입 Handler에 도달하지 않는 것을 확인했다.
+- 아직 View 파일이 없어서 Handler 실행 뒤 `500 Internal Server Error`가 발생하는 것은 요청 매핑 실패가 아니라 View 탐색 실패임을 확인했다.
+
+### 프로젝트 보충 또는 이월 항목
+
+- View 렌더링은 `HTTP 응답 - 정적 리소스, 뷰 템플릿` 수강 뒤 확인한다.
+- 회원가입 파라미터 수신·객체 바인딩·저장은 7/29 요청 파라미터 강의 뒤 구현한다.
+- 회원가입 성공 redirect와 PRG는 8/1 관련 강의 뒤 구현한다.
+- `/health`는 `HTTP 응답 - HTTP API, 메시지 바디에 직접 입력` 수강 뒤 구현한다.
+- 로그인 상태 유지는 MVC2 세션 강의 뒤 구현한다.
+
+### 다음 학습 게이트
+
+7/29에는 `HTTP 요청 - 기본, 헤더 조회`, `HTTP 요청 파라미터 - 쿼리 파라미터, HTML Form`, `HTTP 요청 파라미터 - @RequestParam`, `HTTP 요청 파라미터 - @ModelAttribute`를 순서대로 학습한다. 각 개별 강의 뒤 해금된 방식으로 회원가입 입력 수신과 Memory 저장을 구현하되 redirect와 PRG는 아직 적용하지 않는다.
