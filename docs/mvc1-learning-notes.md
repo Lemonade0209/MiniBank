@@ -351,7 +351,7 @@ MiniBank의 FrontController에 해당하는 프레임워크 영역은 전체 요
 
 ### 다음 학습 게이트
 
-MVC 프레임워크 만들기 후반을 마친 뒤 직접 만든 구조와 Spring MVC의 구성 요소가 어떻게 대응하는지 정리한다. `HomeController`와 `HealthController`는 Spring MVC 구조 이해 섹션을 완료한 뒤에 구현한다.
+MVC 프레임워크 만들기 후반을 마친 뒤 직접 만든 구조와 Spring MVC의 구성 요소가 어떻게 대응하는지 정리한다. `HomeController`는 Spring MVC 구조 이해 섹션을 완료한 뒤에 구현한다. `HealthController`와 `GET /health` 상태 문자열 응답은 Spring MVC 기본 기능에서 `@ResponseBody`를 학습한 뒤에 구현한다.
 
 ## 7/26 - 직접 만든 MVC 프레임워크와 Spring MVC의 대응
 
@@ -412,4 +412,16 @@ GET /members/add
 
 ### 다음 학습 게이트
 
-Spring MVC 구조 이해 섹션을 완료한 뒤 `HomeController`, `GET /`, `HealthController`와 `GET /health`를 구현한다. 회원가입 Controller는 Spring MVC 기본 기능의 요청 매핑과 파라미터를 학습한 뒤에 구현한다.
+Spring MVC 구조 이해 섹션을 완료한 뒤 `HomeController`와 `GET /`를 구현한다. `HealthController`와 `GET /health` 상태 문자열 응답은 Spring MVC 기본 기능에서 `@ResponseBody`를 학습한 뒤에 구현한다. 회원가입 Controller는 요청 매핑과 파라미터를 학습한 뒤에 구현한다.
+
+## 7/27 - Spring MVC 구조 이해
+
+- Spring MVC1 섹션 6을 모두 수강했다.
+- `HomeController`에 `GET /`를 매핑하고 `home` View를 반환하도록 구현했다.
+- `templates/home.html`을 작성하고 브라우저에서 홈 화면을 확인했다.
+- `DispatcherServlet -> HandlerMapping -> HandlerAdapter -> Controller -> ViewResolver` 처리 흐름을 설명했다.
+- 전체 테스트가 통과했다.
+
+### 다음 학습 게이트
+
+Spring MVC 기본 기능에서 HTTP 응답 본문 처리와 `@ResponseBody`를 학습한 뒤 `HealthController`와 `GET /health`의 간단한 상태 문자열 응답을 구현하고 `200 OK`를 확인한다.
