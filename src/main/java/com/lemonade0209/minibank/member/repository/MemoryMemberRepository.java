@@ -2,7 +2,9 @@ package com.lemonade0209.minibank.member.repository;
 
 import com.lemonade0209.minibank.member.domain.Member;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MemoryMemberRepository implements MemberRepository {
@@ -20,6 +22,11 @@ public class MemoryMemberRepository implements MemberRepository {
     @Override
     public Member findById(Long id) {
         return store.get(id);
+    }
+
+    @Override
+    public List<Member> findAll() {
+        return new ArrayList<>(store.values());
     }
 
     @Override

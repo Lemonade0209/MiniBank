@@ -37,6 +37,22 @@ class MemoryMemberRepositoryTest {
         assertThat(savedMember.getId()).isNotNull();
         assertThat(memberRepository.findById(savedMember.getId())).isEqualTo(member);
     }
+
+    @Test
+    void findAll(){
+        //given
+        Member member1 = new Member("member1", "pw0001", "홍길동");
+        Member member2 = new Member("member2", "pw0002", "김철수");
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        //when
+        var members = memberRepository.findAll();
+
+        //then
+        assertThat(members).containsExactlyInAnyOrder(member1, member2);
+    }
+
     @Test
     void findByLoginId(){
         //given
