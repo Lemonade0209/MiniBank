@@ -422,6 +422,8 @@ Spring MVC 구조 이해 섹션을 완료한 뒤 `HomeController`와 `GET /`를 
 - `DispatcherServlet -> HandlerMapping -> HandlerAdapter -> Controller -> ViewResolver` 처리 흐름을 설명했다.
 - 전체 테스트가 통과했다.
 
+현재 홈 화면은 동작까지 확인했지만, Controller 기반 Thymeleaf View의 정식 학습 완료 판정은 `HTTP 응답 - 정적 리소스, 뷰 템플릿` 수강 후 다시 확인한다.
+
 ### 다음 학습 게이트
 
-Spring MVC 기본 기능에서 HTTP 응답 본문 처리와 `@ResponseBody`를 학습한 뒤 `HealthController`와 `GET /health`의 간단한 상태 문자열 응답을 구현하고 `200 OK`를 확인한다.
+7/28에는 Spring MVC 기본 기능의 `프로젝트 생성`, `로깅 간단히 알아보기`, `요청 매핑`을 학습한다. 요청 매핑 예제까지 확인한 뒤 `MemberController`의 `GET /members/add`, `POST /members/add`, `GET /login` 매핑만 작성한다. Form 바인딩과 회원 저장은 7/29의 요청 파라미터 강의 이후, `HealthController`와 `GET /health`는 7/30의 `HTTP 응답 - HTTP API, 메시지 바디에 직접 입력` 수강 이후에 구현한다.
