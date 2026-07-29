@@ -1,9 +1,11 @@
 package com.lemonade0209.minibank.web;
 
+import com.lemonade0209.minibank.member.domain.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
@@ -17,8 +19,8 @@ public class MemberController {
     }
 
     @PostMapping("/members/add")
-    public String addMember() {
-        log.info("POST /members/add handler called");
+    public String addMember(@ModelAttribute Member member) {
+        log.info("loginId={}, name={}", member.getLoginId(), member.getName());
         return "members/add";
     }
 

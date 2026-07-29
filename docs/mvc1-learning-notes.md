@@ -471,3 +471,38 @@ Spring MVC 구조 이해 섹션을 완료한 뒤 `HomeController`와 `GET /`를 
 ### 다음 학습 게이트
 
 7/29에는 `HTTP 요청 - 기본, 헤더 조회`, `HTTP 요청 파라미터 - 쿼리 파라미터, HTML Form`, `HTTP 요청 파라미터 - @RequestParam`, `HTTP 요청 파라미터 - @ModelAttribute`를 순서대로 학습한다. 각 개별 강의 뒤 해금된 방식으로 회원가입 입력 수신과 Memory 저장을 구현하되 redirect와 PRG는 아직 적용하지 않는다.
+
+## 7/29 - 요청 파라미터와 객체 바인딩
+
+### 오늘 완료한 정확한 개별 강의
+
+- `HTTP 요청 - 기본, 헤더 조회`
+- `HTTP 요청 파라미터 - 쿼리 파라미터, HTML Form`
+- `HTTP 요청 파라미터 - @RequestParam`
+- `HTTP 요청 파라미터 - @ModelAttribute`
+
+### MiniBank에 실제 적용한 최소 범위
+
+- `POST /members/add`에서 `loginId`, `password`, `name`을 `@RequestParam`으로 각각 수신했다.
+- 같은 요청을 `@ModelAttribute Member` 객체 바인딩으로 교체했다.
+- `Member`에 기본 생성자와 요청 필드 setter를 추가해 프로퍼티 바인딩 흐름을 확인했다.
+- Postman에서 `application/x-www-form-urlencoded` 요청을 전송하고 `loginId`와 `name`이 바인딩된 것을 애플리케이션 로그로 확인했다.
+- 비밀번호 원문은 로그에 남기지 않았다.
+
+### 확인한 요청 동작
+
+- 필수 `@RequestParam`을 보내지 않으면 `400 Bad Request`가 발생했다.
+- URL 쿼리와 Form 본문 모두 요청 파라미터로 처리되지만, 회원가입은 실제 HTML Form과 같은 요청을 확인하기 위해 Form 본문을 사용했다.
+- 아직 `members/add` View가 없어 Handler 실행 뒤 `500 Internal Server Error`가 발생했으며, 이는 파라미터 바인딩이 아니라 View 탐색 실패임을 확인했다.
+
+### 프로젝트 보충과 이월
+
+- Controller가 Memory Repository를 직접 호출하는 방식은 MiniBank의 `Controller -> Service -> Repository` 의존 방향과 맞지 않아 적용하지 않았다.
+- Service와 Repository의 Spring Bean 연결은 강의 직접 학습 범위가 아니므로 별도 프로젝트 보충 학습 전까지 웹 요청의 회원 저장을 보류한다.
+- 회원가입 성공 View는 `HTTP 응답 - 정적 리소스, 뷰 템플릿` 수강 뒤 연결한다.
+- 회원가입 성공 redirect와 PRG는 해당 웹 페이지 만들기 강의 뒤 적용한다.
+- `BindingResult`와 Bean Validation은 MVC2 검증 강의 뒤 적용한다.
+
+### 다음 학습 게이트
+
+7/30에는 요청 메시지 관련 강의와 `HTTP 응답 - 정적 리소스, 뷰 템플릿`, `HTTP 응답 - HTTP API, 메시지 바디에 직접 입력`, `HTTP 메시지 컨버터`를 순서대로 학습한다. 각 강의를 마친 뒤 회원가입 View와 `GET /health`를 해당 게이트 범위 안에서 구현한다.
