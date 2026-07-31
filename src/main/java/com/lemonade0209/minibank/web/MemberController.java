@@ -1,6 +1,8 @@
 package com.lemonade0209.minibank.web;
 
 import com.lemonade0209.minibank.member.domain.Member;
+import com.lemonade0209.minibank.member.service.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -9,8 +11,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
+@RequiredArgsConstructor
 public class MemberController {
     private final Logger log = LoggerFactory.getLogger(getClass());
+    private final MemberService memberService;
 
     @GetMapping("/members/add")
     public String addForm() {
@@ -21,7 +25,8 @@ public class MemberController {
     @PostMapping("/members/add")
     public String addMember(@ModelAttribute Member member) {
         log.info("loginId={}, name={}", member.getLoginId(), member.getName());
-        return "members/add";
+        memberService.join(member);
+        return "members/save-result";
     }
 
     @GetMapping("/login")

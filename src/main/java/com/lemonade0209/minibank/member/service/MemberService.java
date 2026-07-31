@@ -2,7 +2,9 @@ package com.lemonade0209.minibank.member.service;
 
 import com.lemonade0209.minibank.member.domain.Member;
 import com.lemonade0209.minibank.member.repository.MemberRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class MemberService {
     private final MemberRepository memberRepository;
 

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>계좌 목록</title>
+</head>
+<body>
+<main>
+    <h1>계좌 목록</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>계좌 ID</th>
+            <th>계좌번호</th>
+            <th>잔액</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="account : ${accounts}">
+            <td th:text="${account.id}">1</td>
+            <td>
+                <a th:href="@{/accounts/{accountId}(accountId=${account.id})}"
+                   th:text="${account.accountNumber}">000000000001</a>
+            </td>
+            <td><span th:text="${account.balance}">0</span>원</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{/}">홈으로</a>
+</main>
+</body>
+</html>

@@ -1,12 +1,14 @@
 package com.lemonade0209.minibank.member.repository;
 
 import com.lemonade0209.minibank.member.domain.Member;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Repository
 public class MemoryMemberRepository implements MemberRepository {
 
     private final Map<Long, Member> store = new HashMap<>();

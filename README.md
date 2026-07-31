@@ -2,7 +2,7 @@
 
 MiniBank는 Spring MVC와 JDBC를 순서대로 학습하며 만드는 미니 인터넷뱅킹 프로젝트입니다. 이체 일부 반영이나 동시 출금처럼 잔액 정합성이 깨질 수 있는 상황을 테스트로 재현하고 해결하는 것을 목표로 합니다.
 
-HTTP 설계를 마치고 2026년 7월 21일에 Java 21, Spring Boot 3.5.16과 Gradle 8.14.3 기반 프로젝트를 생성했습니다. 서블릿 요청·응답 실습, Memory 회원 저장소와 중복 로그인 ID 검증을 구현했으며, Spring MVC 요청 매핑과 요청 파라미터를 학습한 뒤 회원가입 Form 요청을 `Member` 객체로 바인딩했습니다. 다음 학습 게이트는 HTTP 응답의 정적 리소스와 View 템플릿이며, 웹 요청의 회원 저장 연결은 계층 구성 방식을 설명할 수 있을 때 프로젝트 보충으로 진행합니다.
+HTTP 설계를 마치고 2026년 7월 21일에 Java 21, Spring Boot 3.5.16과 Gradle 8.14.3 기반 프로젝트를 생성했습니다. 서블릿 요청·응답 실습, Memory 회원 저장소와 중복 로그인 ID 검증을 구현했으며, 회원가입 요청을 Memory 저장소와 결과 View에 연결했습니다. Spring MVC의 `상품 상세`까지 학습한 범위에서는 Account 도메인과 Memory 저장소·Service 테스트, Thymeleaf 기반 계좌 목록·상세 화면을 구현했습니다. 다음 학습 게이트는 계좌 등록 폼입니다.
 
 ## 프로젝트 목표
 
@@ -153,6 +153,9 @@ MVC1 단계는 전체 테스트와 수동 시연을 통과한 뒤 `v0.1-mvc1-mem
 - [x] DispatcherServlet 이후 HandlerMapping, HandlerAdapter, Controller와 ViewResolver 흐름 설명
 - [x] `MemberController`의 회원가입 GET·POST와 로그인 GET 요청 매핑 및 로그 확인
 - [x] 회원가입 `@RequestParam` 수신과 `@ModelAttribute` 객체 바인딩 확인
+- [x] 회원가입 요청의 Memory 저장과 결과 View 연결
+- [x] Account 도메인, Memory 저장소와 Service 테스트
+- [x] `GET /accounts`, `GET /accounts/{accountId}` 계좌 목록·상세 화면
 - [ ] 회원·계좌 Memory MVP
 - [ ] 로그인·입출금 Memory MVP
 - [ ] H2/JDBC 전환
