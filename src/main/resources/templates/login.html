@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>회원가입</title>
+    <title>로그인</title>
     <link rel="stylesheet" href="/minibank.css">
 </head>
 <body>
 <main class="page-shell page-shell--narrow">
-    <a class="brand-link" href="/">
+    <a class="brand-link" th:href="@{/}">
         <span class="brand-mark" aria-hidden="true">M</span>
         MiniBank
     </a>
@@ -16,26 +16,25 @@
     <section class="panel">
         <header class="page-header">
             <div>
-                <p class="eyebrow">Membership</p>
-                <h1>회원가입</h1>
-                <p class="lead">MiniBank를 시작할 회원 정보를 입력해 주세요.</p>
+                <p class="eyebrow">Login</p>
+                <h1>로그인</h1>
+                <p class="lead">로그인 처리는 MVC2 세션 학습 뒤 연결합니다.</p>
             </div>
         </header>
 
-        <form class="form-stack" action="/members/add" method="post">
+        <form class="form-stack">
             <div class="field">
                 <label for="loginId">로그인 ID</label>
                 <input type="text" id="loginId" name="loginId" autocomplete="username">
             </div>
             <div class="field">
                 <label for="password">비밀번호</label>
-                <input type="password" id="password" name="password" autocomplete="new-password">
+                <input type="password" id="password" name="password" autocomplete="current-password">
             </div>
-            <div class="field">
-                <label for="name">이름</label>
-                <input type="text" id="name" name="name" autocomplete="name">
+            <div class="action-row">
+                <a class="button button--quiet" th:href="@{/members/add}">회원가입</a>
+                <button class="button button--primary" type="submit" disabled>로그인 준비 중</button>
             </div>
-            <button class="button button--primary" type="submit">가입하기</button>
         </form>
     </section>
 </main>

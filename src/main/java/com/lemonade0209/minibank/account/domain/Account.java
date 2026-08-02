@@ -18,6 +18,14 @@ public class Account {
         this.createdAt = LocalDateTime.now();
     }
 
+    public Account() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public void setMemberId(Long memberId) {
+        this.memberId = memberId;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }

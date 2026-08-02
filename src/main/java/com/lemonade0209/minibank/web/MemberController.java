@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,10 +24,13 @@ public class MemberController {
     }
 
     @PostMapping("/members/add")
-    public String addMember(@ModelAttribute Member member) {
+    public String addMember(@ModelAttribute Member member,
+                            RedirectAttributes redirectAttributes) {
         log.info("loginId={}, name={}", member.getLoginId(), member.getName());
-        memberService.join(member);
-        return "members/save-result";
+        Member joinedMember = memberService.join(member);
+        redirectAttributes.addAttribute("memberId", joinedMember.getId());
+        redirectAttributes.addAttribute("joined", true);
+        return "redirect:/accounts/add";
     }
 
     @GetMapping("/login")

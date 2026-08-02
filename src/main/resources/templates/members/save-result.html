@@ -2,32 +2,47 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>회원가입 완료</title>
+    <link rel="stylesheet" href="/minibank.css">
 </head>
 <body>
-<main>
-    <h1>회원가입 완료</h1>
-    <p>회원 정보가 저장되었습니다.</p>
+<main class="page-shell page-shell--narrow">
+    <a class="brand-link" th:href="@{/}">
+        <span class="brand-mark" aria-hidden="true">M</span>
+        MiniBank
+    </a>
 
-    <dl>
-        <div>
-            <dt>회원 번호</dt>
-            <dd th:text="${member.id}">1</dd>
-        </div>
-        <div>
-            <dt>로그인 ID</dt>
-            <dd th:text="${member.loginId}">member1</dd>
-        </div>
-        <div>
-            <dt>이름</dt>
-            <dd th:text="${member.name}">홍길동</dd>
-        </div>
-    </dl>
+    <section class="panel">
+        <div class="success-mark" aria-hidden="true">✓</div>
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">Welcome aboard</p>
+                <h1>회원가입 완료</h1>
+                <p class="lead">회원 정보가 저장되었습니다.</p>
+            </div>
+        </header>
 
-    <nav aria-label="회원가입 완료 후 이동">
-        <a th:href="@{/}">홈으로</a>
-        <a th:href="@{/members/add}">다른 회원 가입</a>
-    </nav>
+        <dl class="data-list">
+            <div class="data-list__item">
+                <dt>회원 번호</dt>
+                <dd th:text="${member.id}">1</dd>
+            </div>
+            <div class="data-list__item">
+                <dt>로그인 ID</dt>
+                <dd th:text="${member.loginId}">member1</dd>
+            </div>
+            <div class="data-list__item">
+                <dt>이름</dt>
+                <dd th:text="${member.name}">홍길동</dd>
+            </div>
+        </dl>
+
+        <nav class="action-row" aria-label="회원가입 완료 후 이동">
+            <a class="button button--quiet" th:href="@{/}">홈으로</a>
+            <a class="button button--primary" th:href="@{/members/add}">다른 회원 가입</a>
+        </nav>
+    </section>
 </main>
 </body>
 </html>

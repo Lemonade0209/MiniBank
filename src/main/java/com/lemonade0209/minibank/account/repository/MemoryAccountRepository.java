@@ -30,4 +30,19 @@ public class MemoryAccountRepository implements AccountRepository {
     public List<Account> findAll() {
         return new ArrayList<>(store.values());
     }
+
+    @Override
+    public Account findByAccountNumber(String accountNumber) {
+        return store.values().stream()
+                .filter(account -> account.getAccountNumber().equals(accountNumber))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public List<Account> findByMemberId(Long memberId) {
+        return store.values().stream()
+                .filter(account -> account.getMemberId().equals(memberId))
+                .toList();
+    }
 }

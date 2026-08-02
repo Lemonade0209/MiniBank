@@ -11,4 +11,8 @@ public interface AccountRepository {
     Account findById(Long id);
 
     List<Account> findAll();
+
+    Account findByAccountNumber(String accountNumber);
+
+    List<Account> findByMemberId(Long memberId);
 }

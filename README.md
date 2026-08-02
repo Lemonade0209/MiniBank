@@ -2,7 +2,7 @@
 
 MiniBank는 Spring MVC와 JDBC를 순서대로 학습하며 만드는 미니 인터넷뱅킹 프로젝트입니다. 이체 일부 반영이나 동시 출금처럼 잔액 정합성이 깨질 수 있는 상황을 테스트로 재현하고 해결하는 것을 목표로 합니다.
 
-HTTP 설계를 마치고 2026년 7월 21일에 Java 21, Spring Boot 3.5.16과 Gradle 8.14.3 기반 프로젝트를 생성했습니다. 서블릿 요청·응답 실습, Memory 회원 저장소와 중복 로그인 ID 검증을 구현했으며, 회원가입 요청을 Memory 저장소와 결과 View에 연결했습니다. Spring MVC의 `상품 상세`까지 학습한 범위에서는 Account 도메인과 Memory 저장소·Service 테스트, Thymeleaf 기반 계좌 목록·상세 화면을 구현했습니다. 다음 학습 게이트는 계좌 등록 폼입니다.
+HTTP 설계를 마치고 2026년 7월 21일에 Java 21, Spring Boot 3.5.16과 Gradle 8.14.3 기반 프로젝트를 생성했습니다. MVC1 학습 범위에서는 홈에서 회원가입을 시작해 명시적인 `memberId`로 계좌를 개설하고 회원별 목록과 상세를 조회하는 Memory 흐름을 구현했습니다. 회원가입과 계좌 개설 성공에는 PRG를 적용했으며, 로그인은 GET 폼만 있고 실제 로그인 판정과 세션 유지는 아직 구현하지 않았습니다. 다음 학습 게이트는 MVC2의 Thymeleaf 텍스트·변수·URL 링크입니다.
 
 ## 프로젝트 목표
 
@@ -61,6 +61,8 @@ HTTP 요청
 ```
 
 Controller는 요청 바인딩과 화면 이동을 맡고, Service는 계좌 소유권과 잔액 규칙을 처리합니다. 두 계층이 저장 기술에 직접 의존하지 않도록 Repository 인터페이스와 구현체를 분리합니다.
+
+MVC1의 Service 분리, Repository 인터페이스와 12자리 계좌번호 생성·충돌 재시도는 강의 예제에 MiniBank 요구사항을 적용한 프로젝트 보충 설계입니다. 세션을 배우기 전까지 회원별 계좌 조회에는 URL과 Form으로 전달하는 명시적인 `memberId`를 사용합니다.
 
 ## 거래 정합성 전략
 
@@ -129,11 +131,11 @@ Spring Boot 프로젝트 생성과 기본 테스트를 완료했습니다. 아�
 
 ### Spring MVC 기본 기능과 웹 페이지 만들기 학습 후
 
-- 회원가입 GET/POST와 로그인 폼 뼈대 구현
-- `Account`, `AccountRepository`와 `MemoryAccountRepository` 작성
-- 12자리 계좌번호 생성과 최대 5회 충돌 재시도
-- 계좌 개설·회원별 목록·상세 화면 구현
-- Controller가 Repository를 직접 호출하지 않는지 확인
+- [x] 회원가입 GET/POST와 로그인 폼 뼈대 구현
+- [x] `Account`, `AccountRepository`와 `MemoryAccountRepository` 작성
+- [x] 12자리 계좌번호 생성과 최대 5회 충돌 재시도
+- [x] 계좌 개설·회원별 목록·상세 화면 구현
+- [x] Controller가 Repository를 직접 호출하지 않는지 확인
 
 MVC1 단계는 전체 테스트와 수동 시연을 통과한 뒤 `v0.1-mvc1-memory` 태그로 마감합니다. 세션 로그인, 입출금과 DB 연결은 다음 단계에서 구현합니다.
 
@@ -153,10 +155,13 @@ MVC1 단계는 전체 테스트와 수동 시연을 통과한 뒤 `v0.1-mvc1-mem
 - [x] DispatcherServlet 이후 HandlerMapping, HandlerAdapter, Controller와 ViewResolver 흐름 설명
 - [x] `MemberController`의 회원가입 GET·POST와 로그인 GET 요청 매핑 및 로그 확인
 - [x] 회원가입 `@RequestParam` 수신과 `@ModelAttribute` 객체 바인딩 확인
-- [x] 회원가입 요청의 Memory 저장과 결과 View 연결
+- [x] 회원가입 요청의 Memory 저장과 계좌 개설 화면 redirect
 - [x] Account 도메인, Memory 저장소와 Service 테스트
 - [x] `GET /accounts`, `GET /accounts/{accountId}` 계좌 목록·상세 화면
-- [ ] 회원·계좌 Memory MVP
+- [x] 회원가입 성공 후 명시적 `memberId` 기반 계좌 개설 PRG
+- [x] 회원별 계좌 목록·상세와 계좌번호 충돌 재시도
+- [x] 홈에서 회원가입·계좌 개설·목록·상세로 이어지는 Memory MVP
+- [ ] 세션 로그인·로그아웃
 - [ ] 로그인·입출금 Memory MVP
 - [ ] H2/JDBC 전환
 - [ ] 이체 롤백과 동시 출금 테스트

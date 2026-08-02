@@ -2,33 +2,60 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>계좌 목록</title>
+    <link rel="stylesheet" href="/minibank.css">
 </head>
 <body>
-<main>
-    <h1>계좌 목록</h1>
+<main class="page-shell">
+    <a class="brand-link" th:href="@{/}">
+        <span class="brand-mark" aria-hidden="true">M</span>
+        MiniBank
+    </a>
 
-    <table>
-        <thead>
-        <tr>
-            <th>계좌 ID</th>
-            <th>계좌번호</th>
-            <th>잔액</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="account : ${accounts}">
-            <td th:text="${account.id}">1</td>
-            <td>
-                <a th:href="@{/accounts/{accountId}(accountId=${account.id})}"
-                   th:text="${account.accountNumber}">000000000001</a>
-            </td>
-            <td><span th:text="${account.balance}">0</span>원</td>
-        </tr>
-        </tbody>
-    </table>
+    <section class="panel">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">Accounts</p>
+                <h1>회원 <span th:text="${memberId}">1</span>의 계좌 목록</h1>
+                <p class="lead">이 회원에게 등록된 계좌와 현재 잔액을 확인하세요.</p>
+            </div>
+            <div class="action-row">
+                <a class="button button--quiet" th:href="@{/}">홈으로</a>
+                <a class="button button--primary"
+                   th:href="@{/accounts/add(memberId=${memberId})}">계좌 개설</a>
+            </div>
+        </header>
 
-    <a th:href="@{/}">홈으로</a>
+        <p class="status-chip"
+           th:if="${param.status}"
+           th:text="'계좌 개설이 완료되었습니다.'">계좌 개설 완료</p>
+
+        <div class="table-card">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>계좌 ID</th>
+                        <th>계좌번호</th>
+                        <th>잔액</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="account : ${accounts}">
+                        <td th:text="${account.id}">1</td>
+                        <td>
+                            <a class="account-number"
+                               th:href="@{/accounts/{accountId}(accountId=${account.id},memberId=${account.memberId})}"
+                               th:text="${account.accountNumber}">000000000001</a>
+                        </td>
+                        <td><span class="money" th:text="${account.balance}">0</span>원</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 </main>
 </body>
 </html>
