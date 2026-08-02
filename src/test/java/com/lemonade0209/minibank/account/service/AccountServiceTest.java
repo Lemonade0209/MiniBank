@@ -2,6 +2,8 @@ package com.lemonade0209.minibank.account.service;
 
 import com.lemonade0209.minibank.account.domain.Account;
 import com.lemonade0209.minibank.account.repository.MemoryAccountRepository;
+import com.lemonade0209.minibank.member.domain.Member;
+import com.lemonade0209.minibank.member.repository.MemoryMemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,24 +14,28 @@ class AccountServiceTest {
 
     private AccountService accountService;
     private MemoryAccountRepository accountRepository;
+    private MemoryMemberRepository memberRepository;
 
     @BeforeEach
     void setUp() {
         accountRepository = new MemoryAccountRepository();
-        accountService = new AccountService(accountRepository);
+        memberRepository = new MemoryMemberRepository();
+        accountService = new AccountService(accountRepository, memberRepository);
     }
 
     @Test
     void openAccount() {
         // given
-        Long memberId = 1L;
+        Member member = memberRepository.save(
+                new Member("member1", "pw000001", "홍길동")
+        );
 
         // when
-        Account account = accountService.openAccount(memberId);
+        Account account = accountService.openAccount(member.getId());
 
         // then
         assertThat(account.getId()).isNotNull();
-        assertThat(account.getMemberId()).isEqualTo(memberId);
+        assertThat(account.getMemberId()).isEqualTo(member.getId());
         assertThat(account.getAccountNumber()).isEqualTo("000000000001");
         assertThat(account.getAccountNumber()).hasSize(12);
         assertThat(account.getBalance()).isZero();
@@ -39,10 +45,13 @@ class AccountServiceTest {
     @Test
     void retryWhenAccountNumberAlreadyExists() {
         // given
+        Member member = memberRepository.save(
+                new Member("member1", "pw000001", "홍길동")
+        );
         saveAccountsWithNumbers(1, 5);
 
         // when
-        Account account = accountService.openAccount(1L);
+        Account account = accountService.openAccount(member.getId());
 
         // then
         assertThat(account.getAccountNumber()).isEqualTo("000000000006");
@@ -51,12 +60,24 @@ class AccountServiceTest {
     @Test
     void failWhenAccountNumberRetryIsExhausted() {
         // given
+        Member member = memberRepository.save(
+                new Member("member1", "pw000001", "홍길동")
+        );
         saveAccountsWithNumbers(1, 6);
 
         // when & then
-        assertThatThrownBy(() -> accountService.openAccount(1L))
+        assertThatThrownBy(() -> accountService.openAccount(member.getId()))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("계좌번호 생성에 실패했습니다.");
+    }
+
+    @Test
+    void failWhenMemberDoesNotExist() {
+        // when & then
+        assertThatThrownBy(() -> accountService.openAccount(999L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 회원입니다.");
+        assertThat(accountRepository.findAll()).isEmpty();
     }
 
     @Test

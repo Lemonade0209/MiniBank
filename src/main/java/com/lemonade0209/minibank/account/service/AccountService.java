@@ -2,6 +2,7 @@ package com.lemonade0209.minibank.account.service;
 
 import com.lemonade0209.minibank.account.domain.Account;
 import com.lemonade0209.minibank.account.repository.AccountRepository;
+import com.lemonade0209.minibank.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +12,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
+    private final MemberRepository memberRepository;
     private long accountNumberSequence = 0L;
 
     private static final int MAX_RETRY_COUNT = 5;
 
     public Account openAccount(Long memberId) {
+        if (memberRepository.findById(memberId) == null) {
+            throw new IllegalArgumentException("존재하지 않는 회원입니다.");
+        }
+
         for (int retryCount = 0; retryCount <= MAX_RETRY_COUNT; retryCount++) {
             String accountNumber = generateAccountNumber();
 

@@ -41,7 +41,9 @@ class MemberServiceTest {
         memberService.join(member1);
 
         // when
-        assertThatThrownBy(() -> memberService.join(member2));
+        assertThatThrownBy(() -> memberService.join(member2))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("이미 존재하는 로그인 ID입니다.");
 
         // then
         assertThat(member2.getId()).isNull();
