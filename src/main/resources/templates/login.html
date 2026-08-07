@@ -8,10 +8,7 @@
 </head>
 <body>
 <main class="page-shell page-shell--narrow">
-    <a class="brand-link" th:href="@{/}">
-        <span class="brand-mark" aria-hidden="true">M</span>
-        MiniBank
-    </a>
+    <a th:replace="~{fragments/navigation :: brand}"></a>
 
     <section class="panel">
         <header class="page-header">

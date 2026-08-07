@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+<a th:fragment="brand" class="brand-link" th:href="@{/}">
+    <span class="brand-mark" aria-hidden="true">M</span>
+    MiniBank
+</a>
+
+<nav th:fragment="guest-menu" class="action-row" aria-label="회원 메뉴">
+    <a class="button button--quiet" th:href="@{/login}">로그인</a>
+    <a class="button button--primary" th:href="@{/members/add}">회원가입</a>
+</nav>
+</body>
+</html>

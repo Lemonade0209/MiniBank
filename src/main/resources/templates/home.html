@@ -13,12 +13,9 @@
             <div class="hero-card__monogram" aria-hidden="true">M</div>
             <p class="eyebrow">Simple banking, clearly built</p>
             <h1>Mini<span>Bank</span></h1>
-            <p class="lead">작지만 분명한 흐름으로 완성해 가는 미니 인터넷뱅킹</p>
-            <p class="status-chip">애플리케이션 정상 작동 중</p>
-            <nav class="action-row" aria-label="회원 메뉴">
-                <a class="button button--quiet" th:href="@{/login}">로그인</a>
-                <a class="button button--primary" th:href="@{/members/add}">회원가입</a>
-            </nav>
+            <p class="lead">은행의 핵심 흐름을 직접 구현하는 미니 인터넷뱅킹</p>
+            <p class="status-chip" th:text="${projectStatus}">애플리케이션 정상 작동 중</p>
+            <nav th:replace="~{fragments/navigation :: guest-menu}"></nav>
         </div>
     </section>
 </main>

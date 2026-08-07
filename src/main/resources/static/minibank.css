@@ -431,6 +431,14 @@ th:last-child {
     font-weight: 850;
 }
 
+.balance-state {
+    display: inline-block;
+    margin-left: 6px;
+    color: var(--color-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
 @keyframes rise-in {
     from {
         opacity: 0;

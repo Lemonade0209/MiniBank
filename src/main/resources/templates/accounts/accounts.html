@@ -8,10 +8,7 @@
 </head>
 <body>
 <main class="page-shell">
-    <a class="brand-link" th:href="@{/}">
-        <span class="brand-mark" aria-hidden="true">M</span>
-        MiniBank
-    </a>
+    <a th:replace="~{fragments/navigation :: brand}"></a>
 
     <section class="panel">
         <header class="page-header">
@@ -49,7 +46,11 @@
                                th:href="@{/accounts/{accountId}(accountId=${account.id},memberId=${account.memberId})}"
                                th:text="${account.accountNumber}">000000000001</a>
                         </td>
-                        <td><span class="money" th:text="${account.balance}">0</span>원</td>
+                        <td>
+                            <span class="money" th:text="${account.balance}">0</span>원
+                            <span class="balance-state"
+                                  th:if="${account.balance == 0}">입금 전</span>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
