@@ -48,4 +48,17 @@ public class AccountService {
     public List<Account> findByMemberId(Long memberId) {
         return accountRepository.findByMemberId(memberId);
     }
+
+    public Account deposit(Long accountId, long amount) {
+        Account account = accountRepository.findById(accountId);
+
+        if (account == null) {
+            throw new IllegalArgumentException("존재하지 않는 계좌입니다.");
+        }
+        if (amount <= 0) {
+            throw new IllegalArgumentException("입금액은 0보다 커야 합니다.");
+        }
+        account.deposit(amount);
+        return account;
+    }
 }

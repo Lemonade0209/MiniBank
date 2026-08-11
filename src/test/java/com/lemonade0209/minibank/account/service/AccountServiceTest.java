@@ -95,6 +95,46 @@ class AccountServiceTest {
         assertThat(accounts).containsExactlyInAnyOrder(account1, account2);
     }
 
+    @Test
+    void deposit() {
+        // given
+        Member member = memberRepository.save(
+                new Member("member1", "pw000001", "홍길동")
+        );
+        Account account = accountService.openAccount(member.getId());
+
+        // when
+        Account depositedAccount = accountService.deposit(account.getId(), 10_000L);
+
+        // then
+        assertThat(depositedAccount.getBalance()).isEqualTo(10_000L);
+        assertThat(accountService.findById(account.getId()).getBalance()).isEqualTo(10_000L);
+    }
+
+    @Test
+    void failWhenDepositAmountIsZero() {
+        // given
+        Account account = accountRepository.save(new Account(1L, "100000000001"));
+
+        // when & then
+        assertThatThrownBy(() -> accountService.deposit(account.getId(), 0L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("입금액은 0보다 커야 합니다.");
+        assertThat(account.getBalance()).isZero();
+    }
+
+    @Test
+    void failWhenDepositAmountIsNegative() {
+        // given
+        Account account = accountRepository.save(new Account(1L, "100000000001"));
+
+        // when & then
+        assertThatThrownBy(() -> accountService.deposit(account.getId(), -1_000L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("입금액은 0보다 커야 합니다.");
+        assertThat(account.getBalance()).isZero();
+    }
+
     private void saveAccountsWithNumbers(int start, int end) {
         for (int number = start; number <= end; number++) {
             String accountNumber = String.format("%012d", number);

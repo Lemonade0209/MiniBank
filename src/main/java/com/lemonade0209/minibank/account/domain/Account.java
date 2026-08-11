@@ -10,12 +10,17 @@ public class Account {
     private Long memberId;
     private String accountNumber;
     private long balance = 0L;
+    private long amount;
     private final LocalDateTime createdAt;
 
     public Account(Long memberId, String accountNumber) {
         this.memberId = memberId;
         this.accountNumber = accountNumber;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public void deposit(long amount) {
+        this.balance += amount;
     }
 
     public Account() {
@@ -28,5 +33,9 @@ public class Account {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public void setAmount(long amount) {
+        this.amount = amount;
     }
 }
