@@ -19,18 +19,18 @@
             </div>
         </header>
 
-        <form class="form-stack" action="/members/add" method="post">
+        <form class="form-stack" action="/members/add" th:object="${member}" method="post">
             <div class="field">
                 <label for="loginId">로그인 ID</label>
-                <input type="text" id="loginId" name="loginId" autocomplete="username">
+                <input type="text" th:field="*{loginId}" autocomplete="username">
             </div>
             <div class="field">
                 <label for="password">비밀번호</label>
-                <input type="password" id="password" name="password" autocomplete="new-password">
+                <input type="password" th:field="*{password}" autocomplete="new-password">
             </div>
             <div class="field">
                 <label for="name">이름</label>
-                <input type="text" id="name" name="name" autocomplete="name">
+                <input type="text" th:field="*{name}" autocomplete="name">
             </div>
             <button class="button button--primary" type="submit">가입하기</button>
         </form>

@@ -25,11 +25,8 @@
            th:if="${param.joined}"
            th:text="'회원가입이 완료되었습니다.'">회원가입 완료</p>
 
-        <form class="form-stack" action="/accounts/add" method="post">
-            <input type="hidden"
-                   name="memberId"
-                   th:value="${account.memberId}">
-
+        <form class="form-stack" action="/accounts/add" th:object="${account}" method="post">
+            <input type="hidden" th:field="*{memberId}">
             <div class="action-row">
                 <a class="button button--quiet"
                    th:href="@{/accounts(memberId=${account.memberId})}">목록으로</a>
