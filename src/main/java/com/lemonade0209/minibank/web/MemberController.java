@@ -18,7 +18,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/members/add")
-    public String addForm(@ModelAttribute Member member) {
+    public String addForm(@ModelAttribute("member") Member member) {
         log.info("GET /members/add handler called");
         return "members/add";
     }

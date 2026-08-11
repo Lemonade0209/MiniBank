@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>로그인</title>
+    <title th:text="#{page.login}">로그인</title>
     <link rel="stylesheet" href="/minibank.css">
 </head>
 <body>
@@ -14,23 +14,24 @@
         <header class="page-header">
             <div>
                 <p class="eyebrow">Login</p>
-                <h1>로그인</h1>
+                <h1 th:text="#{page.login}">로그인</h1>
                 <p class="lead">로그인 처리는 MVC2 세션 학습 뒤 연결합니다.</p>
             </div>
         </header>
 
         <form class="form-stack">
             <div class="field">
-                <label for="loginId">로그인 ID</label>
+                <label for="loginId" th:text="#{label.member.loginId}">로그인 ID</label>
                 <input type="text" id="loginId" name="loginId" autocomplete="username">
             </div>
             <div class="field">
-                <label for="password">비밀번호</label>
+                <label for="password" th:text="#{label.member.password}">비밀번호</label>
                 <input type="password" id="password" name="password" autocomplete="current-password">
             </div>
             <div class="action-row">
-                <a class="button button--quiet" th:href="@{/members/add}">회원가입</a>
-                <button class="button button--primary" type="submit" disabled>로그인 준비 중</button>
+                <a class="button button--quiet" th:href="@{/members/add}" th:text="#{button.member.add}">회원가입</a>
+                <button class="button button--primary" type="submit" disabled
+                        th:text="#{button.login.ready}">로그인 준비 중</button>
             </div>
         </form>
     </section>

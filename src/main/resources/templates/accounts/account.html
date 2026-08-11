@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>계좌 상세</title>
+    <title th:text="#{page.account.detail}">계좌 상세</title>
     <link rel="stylesheet" href="/minibank.css">
 </head>
 <body>
@@ -14,29 +14,30 @@
         <header class="page-header">
             <div>
                 <p class="eyebrow">Account detail</p>
-                <h1>계좌 상세</h1>
+                <h1 th:text="#{page.account.detail}">계좌 상세</h1>
                 <p class="lead">계좌의 식별 정보와 현재 잔액입니다.</p>
             </div>
         </header>
 
         <dl class="data-list">
             <div class="data-list__item">
-                <dt>계좌 ID</dt>
+                <dt th:text="#{label.account.id}">계좌 ID</dt>
                 <dd th:text="${account.id}">1</dd>
             </div>
             <div class="data-list__item">
-                <dt>계좌번호</dt>
+                <dt th:text="#{label.account.number}">계좌번호</dt>
                 <dd class="account-number" th:text="${account.accountNumber}">000000000001</dd>
             </div>
             <div class="data-list__item data-list__item--balance">
-                <dt>잔액</dt>
+                <dt th:text="#{label.account.balance}">잔액</dt>
                 <dd><span class="money" th:text="${account.balance}">0</span>원</dd>
             </div>
         </dl>
 
         <div class="action-row">
             <a class="button button--quiet"
-               th:href="@{/accounts(memberId=${account.memberId})}">목록으로</a>
+               th:href="@{/accounts(memberId=${account.memberId})}"
+               th:text="#{button.account.list}">목록으로</a>
         </div>
     </section>
 </main>
