@@ -23,6 +23,10 @@ public class Account {
         this.balance += amount;
     }
 
+    public void withdraw(long amount) {
+        this.balance -= amount;
+    }
+
     public Account() {
         this.createdAt = LocalDateTime.now();
     }

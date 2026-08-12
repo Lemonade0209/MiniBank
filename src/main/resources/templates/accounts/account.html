@@ -24,6 +24,11 @@
             입금이 완료되었습니다.
         </p>
 
+        <p class="status-chip"
+           th:if="${param.withdrawStatus}">
+            출금이 완료되었습니다.
+        </p>
+
         <dl class="data-list">
             <div class="data-list__item">
                 <dt th:text="#{label.account.id}">계좌 ID</dt>
@@ -47,20 +52,45 @@
                 <label for="amount">입금 금액</label>
                 <input id="amount"
                        type="text"
-                       th:field="*{amount}">
+                       th:field="*{amount}"
+                       th:errorclass="input-error">
 
-                <p th:if="${#fields.hasErrors('amount')}"
+                <p class="field-error"
+                   th:if="${#fields.hasErrors('amount')}"
                    th:errors="*{amount}">
                     금액 입력 오류
-                </p>
-
-                <p th:if="${amountError}"
-                   th:text="${amountError}">
-                    입금 금액 오류
                 </p>
             </div>
 
             <button class="button button--primary" type="submit">입금</button>
+        </form>
+
+        <form class="form-stack"
+              th:action="@{/accounts/{accountId}/withdraw(accountId=${account.id})}"
+              th:object="${withdrawAccount}"
+              method="post">
+            <p class="field-error"
+               th:if="${#fields.hasGlobalErrors()}"
+               th:each="error : ${#fields.globalErrors()}"
+               th:text="${error}">
+                출금 오류
+            </p>
+
+            <div class="field">
+                <label for="withdrawAmount">출금 금액</label>
+                <input id="withdrawAmount"
+                       type="text"
+                       th:field="*{amount}"
+                       th:errorclass="input-error">
+
+                <p class="field-error"
+                   th:if="${#fields.hasErrors('amount')}"
+                   th:errors="*{amount}">
+                    출금 금액 오류
+                </p>
+            </div>
+
+            <button class="button button--primary" type="submit">출금</button>
         </form>
 
         <div class="action-row">

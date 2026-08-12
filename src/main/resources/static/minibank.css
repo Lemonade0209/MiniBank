@@ -9,6 +9,7 @@
     --color-mint-dark: #08785e;
     --color-lime: #dff5a8;
     --color-focus: #0f8f70;
+    --color-error: #b42318;
     --shadow-card: 0 24px 70px rgba(27, 63, 72, 0.14);
     --radius-large: 28px;
     --radius-medium: 18px;
@@ -258,6 +259,21 @@ h1 {
     outline: none;
     background: var(--color-surface-strong);
     box-shadow: 0 0 0 4px rgba(40, 200, 157, 0.13);
+}
+
+.field input.input-error {
+    border-color: var(--color-error);
+}
+
+.field input.input-error:focus {
+    box-shadow: 0 0 0 4px rgba(180, 35, 24, 0.12);
+}
+
+.field-error {
+    margin: 0;
+    color: var(--color-error);
+    font-size: 0.86rem;
+    font-weight: 700;
 }
 
 .button,

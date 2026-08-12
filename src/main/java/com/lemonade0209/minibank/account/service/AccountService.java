@@ -3,16 +3,22 @@ package com.lemonade0209.minibank.account.service;
 import com.lemonade0209.minibank.account.domain.Account;
 import com.lemonade0209.minibank.account.repository.AccountRepository;
 import com.lemonade0209.minibank.member.repository.MemberRepository;
+import com.lemonade0209.minibank.transaction.domain.AccountTransaction;
+import com.lemonade0209.minibank.transaction.repository.AccountTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.lemonade0209.minibank.transaction.domain.TransactionType.DEPOSIT;
+import static com.lemonade0209.minibank.transaction.domain.TransactionType.WITHDRAWAL;
 
 @Service
 @RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
     private final MemberRepository memberRepository;
+    private final AccountTransactionRepository transactionRepository;
     private long accountNumberSequence = 0L;
 
     private static final int MAX_RETRY_COUNT = 5;
@@ -58,7 +64,45 @@ public class AccountService {
         if (amount <= 0) {
             throw new IllegalArgumentException("입금액은 0보다 커야 합니다.");
         }
+
         account.deposit(amount);
+        transactionRepository.save(
+                new AccountTransaction(
+                        account.getId(),
+                        DEPOSIT,
+                        amount,
+                        account.getBalance(),
+                        null,
+                        null
+                )
+        );
         return account;
+    }
+
+    public boolean withdraw(Long accountId, long amount) {
+        Account account = accountRepository.findById(accountId);
+
+        if (account == null) {
+            throw new IllegalArgumentException("존재하지 않는 계좌입니다.");
+        }
+        if (amount <= 0) {
+            throw new IllegalArgumentException("출금액은 0보다 커야 합니다.");
+        }
+        if (account.getBalance() < amount) {
+            return false;
+        }
+
+        account.withdraw(amount);
+        transactionRepository.save(
+                new AccountTransaction(
+                        account.getId(),
+                        WITHDRAWAL,
+                        amount,
+                        account.getBalance(),
+                        null,
+                        null
+                )
+        );
+        return true;
     }
 }

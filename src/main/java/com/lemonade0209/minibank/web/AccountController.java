@@ -32,6 +32,7 @@ public class AccountController {
     public String account(@PathVariable Long accountId, Model model) {
         model.addAttribute("account", accountService.findById(accountId));
         model.addAttribute("depositAccount", new Account());
+        model.addAttribute("withdrawAccount", new Account());
         return "accounts/account";
     }
 
@@ -57,23 +58,50 @@ public class AccountController {
             Model model,
             RedirectAttributes redirectAttributes) {
 
+        if (!bindingResult.hasErrors() && depositAccount.getAmount() <= 0) {
+            bindingResult.rejectValue("amount", "positive");
+        }
         if (bindingResult.hasErrors()) {
             model.addAttribute("account", accountService.findById(accountId));
+            model.addAttribute("withdrawAccount", new Account());
             return "accounts/account";
         }
-
-        if (depositAccount.getAmount() <= 0) {
-            model.addAttribute(
-                    "amountError",
-                    "입금 금액은 1원 이상이어야 합니다."
-            );
-            model.addAttribute("account", accountService.findById(accountId));
-            return "accounts/account";
-        }
-
         accountService.deposit(accountId, depositAccount.getAmount());
         redirectAttributes.addAttribute("depositStatus", true);
+        return "redirect:/accounts/{accountId}";
+    }
 
+    @PostMapping("/accounts/{accountId}/withdraw")
+    public String withdraw(
+            @PathVariable Long accountId,
+            @ModelAttribute("withdrawAccount") Account withdrawAccount,
+            BindingResult bindingResult,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        if (!bindingResult.hasErrors() && withdrawAccount.getAmount() <= 0) {
+            bindingResult.rejectValue("amount", "positive");
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("account", accountService.findById(accountId));
+            model.addAttribute("depositAccount", new Account());
+            return "accounts/account";
+        }
+
+        boolean withdrawn = accountService.withdraw(
+                accountId,
+                withdrawAccount.getAmount()
+        );
+
+        if (!withdrawn) {
+            bindingResult.reject("insufficientBalance");
+            model.addAttribute("account", accountService.findById(accountId));
+            model.addAttribute("depositAccount", new Account());
+            return "accounts/account";
+        }
+
+        redirectAttributes.addAttribute("withdrawStatus", true);
         return "redirect:/accounts/{accountId}";
     }
 }

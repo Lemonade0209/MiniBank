@@ -4,9 +4,12 @@ import com.lemonade0209.minibank.account.domain.Account;
 import com.lemonade0209.minibank.account.repository.MemoryAccountRepository;
 import com.lemonade0209.minibank.member.domain.Member;
 import com.lemonade0209.minibank.member.repository.MemoryMemberRepository;
+import com.lemonade0209.minibank.transaction.repository.MemoryAccountTransactionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.lemonade0209.minibank.transaction.domain.TransactionType.DEPOSIT;
+import static com.lemonade0209.minibank.transaction.domain.TransactionType.WITHDRAWAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -15,12 +18,18 @@ class AccountServiceTest {
     private AccountService accountService;
     private MemoryAccountRepository accountRepository;
     private MemoryMemberRepository memberRepository;
+    private MemoryAccountTransactionRepository transactionRepository;
 
     @BeforeEach
     void setUp() {
         accountRepository = new MemoryAccountRepository();
         memberRepository = new MemoryMemberRepository();
-        accountService = new AccountService(accountRepository, memberRepository);
+        transactionRepository = new MemoryAccountTransactionRepository();
+        accountService = new AccountService(
+                accountRepository,
+                memberRepository,
+                transactionRepository
+        );
     }
 
     @Test
@@ -109,6 +118,15 @@ class AccountServiceTest {
         // then
         assertThat(depositedAccount.getBalance()).isEqualTo(10_000L);
         assertThat(accountService.findById(account.getId()).getBalance()).isEqualTo(10_000L);
+        assertThat(transactionRepository.findByAccountId(account.getId()))
+                .singleElement()
+                .satisfies(transaction -> {
+                    assertThat(transaction.getType()).isEqualTo(DEPOSIT);
+                    assertThat(transaction.getAmount()).isEqualTo(10_000L);
+                    assertThat(transaction.getBalanceAfter()).isEqualTo(10_000L);
+                    assertThat(transaction.getCounterpartyAccountId()).isNull();
+                    assertThat(transaction.getTransferGroupId()).isNull();
+                });
     }
 
     @Test
@@ -121,6 +139,7 @@ class AccountServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("입금액은 0보다 커야 합니다.");
         assertThat(account.getBalance()).isZero();
+        assertThat(transactionRepository.findByAccountId(account.getId())).isEmpty();
     }
 
     @Test
@@ -133,6 +152,82 @@ class AccountServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("입금액은 0보다 커야 합니다.");
         assertThat(account.getBalance()).isZero();
+        assertThat(transactionRepository.findByAccountId(account.getId())).isEmpty();
+    }
+
+    @Test
+    void withdraw() {
+        // given
+        Account account = accountRepository.save(new Account(1L, "100000000001"));
+        account.deposit(10_000L);
+
+        // when
+        boolean withdrawn = accountService.withdraw(account.getId(), 4_000L);
+
+        // then
+        assertThat(withdrawn).isTrue();
+        assertThat(account.getBalance()).isEqualTo(6_000L);
+        assertThat(transactionRepository.findByAccountId(account.getId()))
+                .singleElement()
+                .satisfies(transaction -> {
+                    assertThat(transaction.getType()).isEqualTo(WITHDRAWAL);
+                    assertThat(transaction.getAmount()).isEqualTo(4_000L);
+                    assertThat(transaction.getBalanceAfter()).isEqualTo(6_000L);
+                    assertThat(transaction.getCounterpartyAccountId()).isNull();
+                    assertThat(transaction.getTransferGroupId()).isNull();
+                });
+    }
+
+    @Test
+    void failWhenWithdrawAmountIsZero() {
+        // given
+        Account account = accountRepository.save(new Account(1L, "100000000001"));
+        account.deposit(10_000L);
+
+        // when & then
+        assertThatThrownBy(() -> accountService.withdraw(account.getId(), 0L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("출금액은 0보다 커야 합니다.");
+        assertThat(account.getBalance()).isEqualTo(10_000L);
+        assertThat(transactionRepository.findByAccountId(account.getId())).isEmpty();
+    }
+
+    @Test
+    void failWhenWithdrawAmountIsNegative() {
+        // given
+        Account account = accountRepository.save(new Account(1L, "100000000001"));
+        account.deposit(10_000L);
+
+        // when & then
+        assertThatThrownBy(() -> accountService.withdraw(account.getId(), -1_000L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("출금액은 0보다 커야 합니다.");
+        assertThat(account.getBalance()).isEqualTo(10_000L);
+        assertThat(transactionRepository.findByAccountId(account.getId())).isEmpty();
+    }
+
+    @Test
+    void failWhenBalanceIsInsufficient() {
+        // given
+        Account account = accountRepository.save(new Account(1L, "100000000001"));
+        account.deposit(5_000L);
+
+        // when
+        boolean withdrawn = accountService.withdraw(account.getId(), 7_000L);
+
+        // then
+        assertThat(withdrawn).isFalse();
+        assertThat(account.getBalance()).isEqualTo(5_000L);
+        assertThat(transactionRepository.findByAccountId(account.getId())).isEmpty();
+    }
+
+    @Test
+    void failWhenWithdrawAccountDoesNotExist() {
+        // when & then
+        assertThatThrownBy(() -> accountService.withdraw(999L, 1_000L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 계좌입니다.");
+        assertThat(transactionRepository.findByAccountId(999L)).isEmpty();
     }
 
     private void saveAccountsWithNumbers(int start, int end) {
